@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
+import jwt, { SignOptions } from 'jsonwebtoken';
 import pool from '../config/database';
 import { UserRegistration, UserLogin, UserResponse } from '../models/user';
 
@@ -43,7 +43,7 @@ export const register = async (req: Request, res: Response) => {
     // Generate JWT
     const token = jwt.sign(
       { userId: user.id, isPremium: user.is_premium },
-      process.env.JWT_SECRET!,
+      process.env.JWT_SECRET as jwt.Secret,
       { expiresIn: process.env.JWT_EXPIRES_IN || '7d' }
     );
 
@@ -92,7 +92,7 @@ export const login = async (req: Request, res: Response) => {
     // Generate JWT
     const token = jwt.sign(
       { userId: user.id, isPremium: user.is_premium },
-      process.env.JWT_SECRET!,
+      process.env.JWT_SECRET as jwt.Secret,
       { expiresIn: process.env.JWT_EXPIRES_IN || '7d' }
     );
 
