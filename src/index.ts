@@ -4,6 +4,7 @@ import helmet from 'helmet';
 import dotenv from 'dotenv';
 import pool from './config/database';
 import authRoutes from './routes/auth';
+import promptRoutes from './routes/prompts';
 
 dotenv.config();
 
@@ -15,8 +16,11 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Routes
+// Rotas de autenticação
 app.use('/api/auth', authRoutes);
+
+// Rotas de prompts
+app.use('/api/prompts', promptRoutes);
 
 app.get('/health', async (req: Request, res: Response) => {
   try {
