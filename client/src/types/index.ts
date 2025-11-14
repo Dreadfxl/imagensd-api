@@ -24,11 +24,13 @@ export interface AuthResponse {
 
 export interface Prompt {
   id: number;
-  userId: number;
-  promptText: string;
-  negativePrompt?: string;
-  createdAt: string;
-  updatedAt: string;
+  user_id: number;
+  title: string;
+  prompt_text: string;
+  negative_prompt?: string;
+  style?: string;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface ImageGenerationRequest {
