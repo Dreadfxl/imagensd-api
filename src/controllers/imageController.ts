@@ -3,6 +3,7 @@ import { Request, Response } from 'express';
 import pool from '../config/database';
 import { AuthRequest } from '../middleware/auth';
 import { GenerationRequest } from '../models/generatedImage';
+import { saveBase64Images } from '../utils/imageStorage';
 
 // Configuração da API externa
 const GOOGLE_API_URL = process.env.GOOGLE_IMAGE_API_URL || '';
@@ -53,14 +54,15 @@ export const generateImage = async (req: AuthRequest, res: Response) => {
     }
 
     // Salva cada imagem na BD
+
+        // Save base64 images as physical files
+        const savedImagePaths = await saveBase64Images(images);
     let resultImages = [];
     for (const img of images) {
       let url = img;
       // Se vier base64 do SD local, opcionalmente podes guardar numa pasta e depois servir por URL
       if (img.length > 200) { // base64 longa
-        url = `/uploads/${Date.now()}-${Math.random().toString(36).substring(2,8)}.png`;
-        // Aqui faríamos o decode e gravar localmente (por agora só demonstração)
-      }
+      url = savedImagePaths[img.length > 200 ? 0 : images.indexOf(img)]; // Use saved file path        // Aqui faríamos o decode e gravar localmente (por agora só demonstração)
       const dbResult = await pool.query(
         'INSERT INTO generated_images (user_id, prompt_id, image_path, prompt_used, generation_params) VALUES ($1, $2, $3, $4, $5) RETURNING *',
         [userId, prompt_id || null, url, prompt, apiPayload]
