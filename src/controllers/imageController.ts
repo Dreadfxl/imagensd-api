@@ -72,8 +72,12 @@ export const generateImage = async (req: AuthRequest, res: Response) => {
     }
     res.status(201).json(resultImages);
   } catch (error) {
-    console.error('Image generation error:', error.response?.data || error.message);
-    res.status(500).json({ error: 'Failed to generate image(s)' });
+    if (typeof error === 'object' && error !== null) {
+            const errObj = error as any;
+            console.error('Image generation error:', errObj.response?.data || errObj.message);
+          } else {
+            console.error('Image generation error:', error);
+          }res.status(500).json({ error: 'Failed to generate image(s)' });
   }
 };
 
