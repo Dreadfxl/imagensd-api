@@ -56,7 +56,7 @@ export default function Dashboard() {
             setSuccess(response.message);
             loadPrompts(); // Reload prompts list
         } catch (err: any) {
-            setError(err.response?.data?.message || 'Failed to generate image');
+            setError(err.response?.data?.error || err.response?.data?.message || 'Failed to generate image');
         } finally {
             setLoading(false);
         }
@@ -141,12 +141,12 @@ export default function Dashboard() {
                                         borderRadius: '8px',
                                     }}
                                 >
-                                    <p><strong>Prompt:</strong> {prompt.promptText}</p>
-                                    {prompt.negativePrompt && (
-                                        <p><strong>Negative:</strong> {prompt.negativePrompt}</p>
+                                    <p><strong>Prompt:</strong> {prompt.prompt_text}</p>
+                                    {prompt.negative_prompt && (
+                                        <p><strong>Negative:</strong> {prompt.negative_prompt}</p>
                                     )}
                                     <p style={{ fontSize: '0.8rem', color: '#888' }}>
-                                        {new Date(prompt.createdAt).toLocaleString()}
+                                        {new Date(prompt.created_at).toLocaleString()}
                                     </p>
                                 </div>
                             ))}
