@@ -13,17 +13,21 @@ export const promptService = {
   },
 
   async createPrompt(promptText: string, negativePrompt?: string): Promise<Prompt> {
+    // Transform frontend format to backend format
     const response = await api.post<Prompt>('/prompts', {
-      promptText,
-      negativePrompt,
+      title: promptText.substring(0, 50) + (promptText.length > 50 ? '...' : ''), // Create title from prompt
+      prompt_text: promptText,
+      negative_prompt: negativePrompt || '',
     });
     return response.data;
   },
 
   async updatePrompt(id: number, promptText: string, negativePrompt?: string): Promise<Prompt> {
+    // Transform frontend format to backend format
     const response = await api.put<Prompt>(`/prompts/${id}`, {
-      promptText,
-      negativePrompt,
+      title: promptText.substring(0, 50) + (promptText.length > 50 ? '...' : ''),
+      prompt_text: promptText,
+      negative_prompt: negativePrompt || '',
     });
     return response.data;
   },
