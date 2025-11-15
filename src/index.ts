@@ -12,11 +12,42 @@ dotenv.config();
 const app: Application = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(helmet());
-app.use(cors());
+// Configure Helmet with relaxed CSP for development
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        imgSrc: ["'self'", "data:", "blob:", "http://localhost:*", "https://localhost:*"],
+        scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
+        styleSrc: ["'self'", "'unsafe-inline'"],
+        connectSrc: ["'self'", "http://localhost:*", "https://localhost:*"],
+      },
+    },
+    crossOriginResourcePolicy: { policy: "cross-origin" },
+    crossOriginEmbedderPolicy: false,
+  })
+);
+
+// Configure CORS to allow frontend access
+app.use(
+  cors({
+    origin: process.env.CORS_ORIGIN || 'http://localhost:5173', // Vite default port
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+  })
+);
+
 app.use(express.json({limit:'16mb'}));
 app.use(express.urlencoded({ extended: true }));
-app.use('/uploads', express.static('uploads')); // Opcional: servir imagens locais
+
+// Serve static images with proper CORS headers
+app.use('/uploads', (req, res, next) => {
+  res.header('Access-Control-Allow-Origin', process.env.CORS_ORIGIN || 'http://localhost:5173');
+  res.header('Cross-Origin-Resource-Policy', 'cross-origin');
+  next();
+}, express.static('uploads'));
 
 // Rotas principais
 app.use('/api/auth', authRoutes);
